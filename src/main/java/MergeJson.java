@@ -45,14 +45,16 @@ public class MergeJson {
         }
     }
 
-    public static void writeFile(String outputFileName) throws IOException {
-        String completePath = completeFilePath(filePath,outputFileName,1);
+    public static void writeFile(String outputFileName,int counter) throws IOException {
+        String completePath = completeFilePath(filePath,outputFileName,counter);
         fileWriter = new FileWriter(completePath);
         fileWriter.write(mergedJson.toString());
         fileWriter.flush();
     }
 
     public static void main (String args[]) {
+        File outputFile;
+        int counter = 0;
         Scanner s = new Scanner(System.in);
         System.out.println("Enter file path:");
         filePath = s.nextLine();
@@ -65,12 +67,15 @@ public class MergeJson {
         jsonParser = new JSONParser();
         mergedJson = new JSONObject();
         jsonObject = new JSONObject();
-        File outputFile = new File(completeFilePath(filePath,outputFileName,1));
+        do {
+            counter =  counter + 1;
+            outputFile = new File(completeFilePath(filePath, outputFileName, counter));
+        } while (outputFile.length() > 0);
         try {
             do {
                 jsonObject = readFile(filePath,inputPrefixName);
                 mergeJsonFiles(jsonObject);
-                writeFile(outputFileName);
+                writeFile(outputFileName,counter);
             } while (outputFile.length() < maxSize);
         } catch (FileNotFoundException e) {
 
